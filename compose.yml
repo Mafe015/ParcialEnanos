@@ -1,0 +1,90 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres_db
+    restart: unless-stopped
+    ports:
+      - "5469:5432"
+    environment:
+      POSTGRES_USER: DonDinero
+      POSTGRES_PASSWORD: peleasenanos
+      POSTGRES_DB: clubenanos_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.1
+    container_name: keycloak
+    restart: unless-stopped
+    command: start-dev --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_DB: dev-mem
+      KC_HTTP_PORT: 9090
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import
+    networks:
+      - backend
+    healthcheck:
+      # Keycloak 26 tiene curl en la imagen — usamos el endpoint de health en el puerto de management (9000)
+      test: [ "CMD-SHELL", "exec 3<>/dev/tcp/localhost/9090 && echo -e 'GET /realms/peleadores-realm HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n' >&3 && timeout 2 cat <&3 | grep -q 'peleadores-realm'" ]
+      interval: 20s
+      timeout: 15s
+      retries: 12
+      start_period: 60s
+
+  keycloak-setup:
+    image: curlimages/curl:latest
+    container_name: keycloak_setup
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    volumes:
+      - ./keycloak:/scripts
+    entrypoint: [ "sh", "/scripts/fix-master-ssl.sh" ]
+    networks:
+      - backend
+    restart: "no"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dondinero_api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    ports:
+      - "7070:6969"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_db:5432/clubenanos_db
+      SPRING_DATASOURCE_USERNAME: DonDinero
+      SPRING_DATASOURCE_PASSWORD: peleasenanos
+      KEYCLOAK_ISSUER_URI: http://keycloak:9090/realms/peleadores-realm
+    networks:
+      - backend
+
+volumes:
+  postgres_data:
+
+
+networks:
+  backend:
+    driver: bridge
