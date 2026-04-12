@@ -140,14 +140,14 @@
                             </rules>
                             <excludes>
                                 <!-- Exclude main app class, config, entities, DTOs, exceptions -->
-                                <exclude>com/nomelestar/lauracanceleatiempo/LauracanceleatiempoApplication.class</exclude>
-                                <exclude>com/nomelestar/lauracanceleatiempo/config/**</exclude>
-                                <exclude>com/nomelestar/lauracanceleatiempo/chef/model/**</exclude>
-                                <exclude>com/nomelestar/lauracanceleatiempo/dishes/models/**</exclude>
-                                <exclude>com/nomelestar/lauracanceleatiempo/chef/dto/**</exclude>
-                                <exclude>com/nomelestar/lauracanceleatiempo/dishes/dto/**</exclude>
-                                <exclude>com/nomelestar/lauracanceleatiempo/excepciones/ApiError.class</exclude>
-                                <exclude>com/nomelestar/lauracanceleatiempo/excepciones/NotFoundException.class</exclude>
+                                <exclude>com/dondinero/peleadeenanos/PeleadeenanosApplication.class</exclude>
+                                <exclude>com/dondinero/peleadeenanos/config/**</exclude>
+                                <exclude>com/dondinero/peleadeenanos/peleadores/model/**</exclude>
+                                <exclude>com/dondinero/peleadeenanos/dishes/models/**</exclude>
+                                <exclude>com/dondinero/peleadeenanos/peleadores/dto/**</exclude>
+                                <exclude>com/dondinero/peleadeenanos/dishes/dto/**</exclude>
+                                <exclude>com/dondinero/peleadeenanos/excepciones/ApiError.class</exclude>
+                                <exclude>com/dondinero/peleadeenanos/excepciones/NotFoundException.class</exclude>
                             </excludes>
                         </configuration>
                     </execution>

@@ -12,21 +12,32 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/Peleadores")
 public class PeleadoresController {
+
     private final PeleadoresService peleadoresService;
+
     public PeleadoresController(PeleadoresService peleadoresService) {
         this.peleadoresService = peleadoresService;
     }
+
     @GetMapping
-    public List<PeleadorResponseDTO> findAll(){
+    public List<PeleadorResponseDTO> findAll() {
         return peleadoresService.findAll();
     }
+
     @GetMapping("/{id}")
-    public PeleadorResponseDTO findById(@PathVariable Long id){
+    public PeleadorResponseDTO findById(@PathVariable Long id) {
         return peleadoresService.findById(id);
     }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PeleadorResponseDTO create(@Valid @RequestBody PeleadorCreateDTO dto){
+    public PeleadorResponseDTO create(@Valid @RequestBody PeleadorCreateDTO dto) {
         return peleadoresService.create(dto);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        peleadoresService.delete(id);
     }
 }

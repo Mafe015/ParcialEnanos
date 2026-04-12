@@ -25,7 +25,6 @@ public class PeleasService {
     }
 
     public Pelea crear(PeleasCreateDTO dto) {
-
         Peleadores p1 = peleadoresRepository.findById(dto.peleador1Id())
                 .orElseThrow(() -> new NotFoundException("Peleador 1 no existe"));
 
@@ -48,6 +47,13 @@ public class PeleasService {
         pelea.setFecha(LocalDateTime.now());
 
         return peleasRepository.save(pelea);
+    }
+
+    public void delete(Long id) {
+        if (!peleasRepository.existsById(id)) {
+            throw new NotFoundException("Pelea no encontrada");
+        }
+        peleasRepository.deleteById(id);
     }
 
     private int calcularPoder(Peleadores p) {

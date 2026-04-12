@@ -8,6 +8,7 @@ import com.dondinero.peleadeenanos.peleas.models.Pelea;
 import com.dondinero.peleadeenanos.peleas.repository.PeleasRepository;
 import com.dondinero.peleadeenanos.peleas.service.PeleasService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,5 +46,11 @@ public class PeleasController {
     public ResponseEntity<PeleasResponseDTO> crear(@Valid @RequestBody PeleasCreateDTO dto) {
         Pelea pelea = service.crear(dto);
         return ResponseEntity.ok(mapper.toDTO(pelea));
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
     }
 }
